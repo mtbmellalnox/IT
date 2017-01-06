@@ -1,0 +1,38 @@
+#!/bin/bash
+
+LOCKER=/tmp/locker
+
+usage() {
+    echo "Usage: $0 [ -u <USER> ] [ -s <SF case ] [-h]" 2>&1
+    exit 1
+}
+
+SFCASE="none"
+USER=`whoami`
+
+while getopts "u:s:h" o;do
+    case "${o}" in
+        s) SFCASE=${OPTARG} ;;
+        u) USER=${OPTARG};;
+        h) usage;;
+        *) usage;;
+    esac
+
+done
+shift $((OPTIND - 1))
+
+cat << EOF > ${LOCKER}
+
+===================================================
+_user_      $USER 
+_lock_date_ `date`
+_sf_case_   ${SFCASE}
+This host used by:
+===================================================
+EOF
+ssh moya  "banner $USER" >> $LOCKER
+
+cat ${LOCKER}
+sudo cp ${LOCKER} /etc/motd
+rm $LOCKER
+
