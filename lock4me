@@ -30,7 +30,8 @@ _sf_case_   ${SFCASE}
 This host used by:
 ===================================================
 EOF
-ssh moya  "banner $USER" >> $LOCKER
+ssh moya  "figlet $USER" >> $LOCKER
+#ssh moya  "banner $USER" >> $LOCKER
 
 cat ${LOCKER}
 sudo cp ${LOCKER} /etc/motd

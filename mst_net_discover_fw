@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MST=`which mst 2>/dev/null`
+
+if [ ${#MST} -eq 0 ];then
+	echo "No MST utility insalled"
+	exit 1
+fi
+($MST start >/dev/null 2>&1 && $MST ib add >/dev/null 2>&1 && $MST status >/dev/null 2>&1 )
+if [ $? -ne 0 ];then
+	echo "Cannot start MST"
+	exit 1
+fi
+printf "%-40s\t%-20s\n" "Device" "Firmware VER"
+echo "-------------------------------------------------------------"
+for DEV in `find /dev/mst/ -name '*lid*'`;do
+	#echo -n "$DEV            "
+	FW=`set -- $(flint -d ${DEV} -qq q |grep "^FW"); echo $3`
+	printf "%-40s\t%-20s\n" $DEV ${FW}
+done
+echo "-------------------------------------------------------------"
+

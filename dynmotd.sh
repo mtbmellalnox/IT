@@ -1,0 +1,26 @@
+#!/bin/bash
+
+PROCCOUNT=`ps -Afl | wc -l`
+PROCCOUNT=`expr $PROCCOUNT - 4`
+ENDPROC=`cat /etc/security/limits.conf | grep "*" | grep nproc | awk {'print $4'}`
+ENDSESSION="Unlimited"
+PRIVLAGED="Regular User"
+
+echo -e " 
+\033[0;35m##########################################################################
+\033[0;35m# \033[0;37mSystem Data\033[0;35m
+\033[0;35m##########################################################################
+  \033[0;37mHostname \033[0;35m= \033[1;32m`hostname | sed -e 's/^[ \t]*//'`
+\033[0;35m    \033[0;37mKernel \033[0;35m= \033[1;32m`uname -r | sed -e 's/^[ \t]*//'`
+\033[0;35m    \033[0;37mKernel \033[0;35m= \033[1;32m`cat /etc/issue | head -1 | sed -e 's/^[ \t]*//'`
+\033[0;35m    \033[0;37mUptime \033[0;35m= \033[1;32m`uptime | sed 's/.*up ([^,]*), .*/1/' | sed -e 's/^[ \t]*//'`
+\033[0;35m       \033[0;37mCPU \033[0;35m= \033[1;32m`cat /proc/cpuinfo | grep "model name" | head -1 | cut -d ":" -f2 | sed -e 's/^[ \t]*//'`
+\033[0;35m    \033[0;37mMemory \033[0;35m= \033[1;32m`cat /proc/meminfo | grep MemTotal | awk {'print $2'} | sed -e 's/^[ \t]*//'` kB
+\033[0;35m##########################################################################
+\033[0;35m# \033[0;37mUser Data\033[0;35m
+\033[0;35m##########################################################################
+  \033[0;37mUsername \033[0;35m= \033[1;32m`whoami`
+\033[0;35m \033[0;37mPrivlages \033[0;35m= \033[1;32m$PRIVLAGED
+\033[0;35m  \033[0;37mSessions \033[0;35m= \033[1;32m`who | grep $USER | wc -l` of $ENDSESSION MAX
+\033[0;35m \033[0;37mProcesses \033[0;35m= \033[1;32m$PROCCOUNT of `ulimit -u` MAX \033[0;m
+"
